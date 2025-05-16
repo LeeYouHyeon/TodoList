@@ -218,6 +218,10 @@ export default function Main() {
     });
     tagsOff();
     setSelected([]);
+    setShowTags({
+      isShow: false,
+      pos: 0
+    });
   };
 
   const changeUpdateInput = (e) => {
