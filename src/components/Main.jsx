@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import CreateTodo from "./CreateTodo";
 import TodoList from "./TodoList";
+import ChooseTags from "./ChooseTags";
 
 export default function Main() {
   /* DB : todos, tags */
@@ -8,6 +9,47 @@ export default function Main() {
   const [tagDB, setTagDB] = useState([]);
   let nextTagId = useRef(1);
   let nextTodoId = useRef(1);
+
+  /* ChooseTags --------------------------------- */
+  // 1. chooseTags
+  const [selected, setSelected] = useState([]);
+  const toggleSelected = (i) => {
+    if (selected.includes(i))
+      setSelected(selected.filter(
+        id => id !== i
+      ));
+    else setSelected([...selected, i]);
+  }
+
+  //2. showState : 태그 선택항목을 어디에 보여줄지 결정
+  const [showTags, setShowTags] = useState({
+    isShow: false,
+    pos: 0
+  });
+  const tagsOff = () => {
+    setShowTags({
+      ...showTags,
+      isShow: false
+    });
+  };
+  const toggleShowTags = () => {
+    setShowTags({
+      ...showTags,
+      isShow: !showTags.isShow
+    });
+  };
+
+  // 태그 삭제. 이미 사용중인 경우 삭제 불가능
+  const deleteTag = (id) => {
+    for (const todo of todoDB) {
+      if (todo.tags.includes(id)) {
+        alert('사용중인 태그입니다. 먼저 태그를 떼주세요.');
+        return;
+      }
+    }
+
+    setTagDB(tagDB.filter(tag => tag.id !== id));
+  }
 
   /* CreateTag ---------------------------------- */
   // 1. inputTag
@@ -81,22 +123,7 @@ export default function Main() {
   /* -------------------------------------------- */
 
   /* CreateTodo --------------------------------- */
-  // 1. chooseTags
-  const [selected, setSelected] = useState([]);
-  const toggleSelected = (i) => {
-    if (selected.includes(i))
-      setSelected(selected.filter(
-        tag => tag.id !== i
-      ));
-    else setSelected([...selected, i]);
-  }
-  // 태그 선택항목을 보여줄지 말지 선택
-  const [showTags, setShowTags] = useState(false);
-  const toggleShowTags = () => {
-    setShowTags(a => !a);
-  }
-
-  // 2. inputText
+  // inputText
   const [inputText, setInputText] = useState('');
 
   const clearInputText = () => { setInputText('') };
@@ -119,23 +146,123 @@ export default function Main() {
         id: nextTodoId.current,
         text: inputText,
         tags: [...selected],
+        important: false
       }
     ]);
 
     // 입력 항목 초기화
     clearInputText();
     setSelected([]);
-    setShowTags(false);
     nextTodoId.current++;
   }
   /* -------------------------------------------- */
 
+  /* -------------------------------------------- */
+  const deleteTodo = (id) => {
+    setTodoDB(todoDB.filter(todo => todo.id !== id));
+  }
+  const toggleImportant = (id) => {
+    setTodoDB(
+      todoDB.map(todo => {
+        if (todo.id !== id) return todo;
+        return {
+          ...todo,
+          important: !todo.important
+        };
+      })
+    );
+
+  };
+  /* -------------------------------------------- */
+
+  /* updateTodo --------------------------------- */
+  const [updateTodo, setUpdateTodo] = useState({
+    id: 0,
+    text: ''
+  });
+
+  const openUpdateTodo = (id) => {
+    const target = todoDB[
+      todoDB.findIndex(todo => todo.id === id)
+    ];
+    if(!target) {
+      alert('알 수 없는 오류');
+      return;
+    }
+
+    setSelected([...target.tags]);
+    setUpdateTodo({
+      id: id,
+      text: target.text
+    });
+    setShowTags({
+      isShow: true,
+      pos: id
+    });
+  };
+
+  const closeUpdateTodo = () => {
+    setUpdateTodo({
+      id: 0,
+      text: ''
+    });
+    tagsOff();
+    setSelected([]);
+  };
+
+  const changeUpdateInput = (e) => {
+    setUpdateTodo({
+      ...updateTodo,
+      text: e.target.value
+    });
+  };
+
+  const confirmUpdateTodo = () => {
+    if (updateTodo.text === '') return;
+    for (const todo of todoDB) {
+      if (todo.id !== updateTodo.id && todo.text === updateTodo.text) {
+        alert('이미 있는 항목입니다.');
+        return;
+      }
+    }
+
+    setTodoDB(todoDB.map(todo => {
+      if (todo.id !== updateTodo.id) return todo;
+      return {
+        ...todo,
+        text: updateTodo.text,
+        tags: [...selected]
+      };
+    }));
+
+    closeUpdateTodo();
+  }
+
+  const updateTodoKit = {
+    open: openUpdateTodo,
+    close: closeUpdateTodo,
+    onChange: changeUpdateInput,
+    confirm: confirmUpdateTodo
+  };
+  /* -------------------------------------------- */
+
   return <div className="main">
+    {
+      showTags.isShow &&
+      <ChooseTags
+        top={showTags.pos}
+        tagDB={tagDB}
+        selectedTags={selected}
+        toggleTag={toggleSelected}
+        deleteTag={deleteTag}
+        createTagKit={createTagKit} />
+    }
     <CreateTodo
       tags={{
         DB: tagDB,
         tagList: selected,
         toggleTag: toggleSelected,
+        deleteTag: deleteTag
       }}
       createTagKit={createTagKit}
       inputText={{
@@ -150,6 +277,13 @@ export default function Main() {
       toggleShowTags={toggleShowTags}
     />
     {/* filter 부분 */}
-    <TodoList todoDB={todoDB} tagDB={tagDB} />
+    <TodoList 
+    todoDB={todoDB} 
+    tagDB={tagDB} 
+    deleteTodo={deleteTodo} 
+    toggleImportant={toggleImportant}
+    updateTodoKit={updateTodoKit}
+    updateTodo={updateTodo}
+     />
   </div>
 };

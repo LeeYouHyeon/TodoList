@@ -4,15 +4,31 @@
   width: 1200px;
 }
 
-ol, ul, li{
+* {
+  overflow-x: scroll;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+ol,
+ul,
+li {
   list-style: none;
 }
 
 button {
-  border: none;
-  background-color: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background-color: white;
+
   min-width: 30px;
   height: 30px;
+}
+
+.removeBtn {
+  background-color: transparent;
+  border: none;
 }
 
 input {
@@ -30,88 +46,170 @@ input {
   display: flex;
   justify-content: space-between;
 }
-.createTodo>.input{
+
+.createTodo>.input {
   display: flex;
   align-items: center;
 }
-.createTodo>.input>input{
+
+.createTodo>.input>input {
   width: 230px;
+  padding: 1px 7px 3px;
 }
 
 .chooseTags {
   position: absolute;
-  left: 500px;
+  left: 490px;
+
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 20px;
 
   width: 250px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  padding: 20px 0;
-
   box-sizing: border-box;
-}
-.chooseTags>ul{
-  padding: 0;
+
+  background-color: rgba(100, 100, 100, 0.08);
 }
 
-.createTag{
+.chooseTags>ul {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.chooseTags>ul>li>.selectTag {
+  cursor: pointer;
+}
+
+.createTag {
   display: flex;
   justify-content: center;
 }
-.createTag input{
+
+.createTag input {
   margin-bottom: 10px;
 }
 
 .createTag .inputTagText input {
   width: 200px;
 }
-.createTag .colorInput{
+
+.createTag .colorInput {
   width: 100px;
 }
 
-.tagLi{
-  width: 240px;
+.tagLi {
+  width: 200px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 5px;
 }
-.tagDiv{
+
+.tagDiv {
   width: 130px;
   height: 30px;
   line-height: 30px;
+
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
-.tagLi>input{
+
+.tagLi>input {
   width: 24px;
   height: 24px;
 }
 
 /* todoList */
-.todoList{
+.todoList {
   width: 400px;
   margin: 0 auto;
 }
-.todo{
+
+.todo {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-top: 10px;
 }
-.todoTags{
+
+.tagAndImp {
+  display: flex;
+  justify-content: space-between;
+  width: 400px;
+  height: 28px;
+}
+
+.todoTags {
   display: flex;
   justify-content: left;
   width: 400px;
 }
-.todoTag{
+
+.todoTag {
   min-width: 70px;
+  padding: 0 10px;
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
-.todoText{
+
+.todoContent {
+  position: relative;
+}
+
+.todoContent>.buttons {
+  position: absolute;
+  right: 5px;
+  top: 4px;
+}
+.buttons>div{
+  cursor: pointer;
+}
+
+.todoText {
   padding-left: 10px;
   width: 400px;
   text-align: left;
   height: 40px;
   line-height: 40px;
   border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.isImportant {
+  width: 30px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.updateTodoBox{
+  margin-top: 10px;
+}
+.updateTodoBox>.todoContent{
+  display: flex;
+  align-items: center;
+}
+.updateTodoBox>.todoContent>input{
+  width: 300px;
+  padding-left: 10px;
+  height: 40px;
+}
+.updateTodoBox>.todoContent>.buttons{
+  width: 100px;
+  display: flex;
+  right: 0;
+  top: 0;
+}
+.updateTodoBox>.todoContent>.buttons>div{
+  width: 50px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-left: none;
 }
