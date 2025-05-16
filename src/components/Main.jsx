@@ -41,13 +41,23 @@ export default function Main() {
 
   // 태그 삭제. 이미 사용중인 경우 삭제 불가능
   const deleteTag = (id) => {
+    let needToDelete = false;
     for (const todo of todoDB) {
       if (todo.tags.includes(id)) {
-        alert('사용중인 태그입니다. 먼저 태그를 떼주세요.');
-        return;
+        if (window.confirm('사용중인 태그입니다. 정말로 삭제하시겠습니까?')) {
+          needToDelete = true;
+        } else return;
       }
     }
 
+    if (needToDelete) {
+      setTodoDB(todoDB.map(todo => {
+        return {
+          ...todo,
+          tags: todo.tags.filter(tag => tag !== id)
+        }
+      }));
+    }
     setTagDB(tagDB.filter(tag => tag.id !== id));
   }
 
