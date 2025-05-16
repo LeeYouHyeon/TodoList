@@ -1,34 +1,13 @@
 import { useRef, useState } from "react";
 import CreateTodo from "./CreateTodo";
-import CreateTag from "./CreateTag";
+import TodoList from "./TodoList";
 
 export default function Main() {
-  class Tag {
-    constructor(text, color, bgc) {
-      this.id = nextTagId;
-      this.text = text;
-      this.color = color;
-      this.bgc = bgc;
-      nextTagId++;
-    }
-  }
-
-  class Todo {
-    constructor(text, tags) {
-      this.text = text;
-      this.tags = tags;
-      this.important = false;
-    }
-
-    toggleImportant() {
-      this.important = !this.important;
-    }
-  }
-
   /* DB : todos, tags */
   const [todoDB, setTodoDB] = useState([]);
   const [tagDB, setTagDB] = useState([]);
-  const nextTagId = useRef(1);
+  let nextTagId = useRef(1);
+  let nextTodoId = useRef(1);
 
   /* CreateTag ---------------------------------- */
   // 1. inputTag
@@ -40,11 +19,18 @@ export default function Main() {
 
   // 2. changeInputTag
   const onChangeInputTag = (e) => {
-    let key = {
-      'inputTagText': 'text',
-      'inputTagColor': 'color',
-      'inputTagBgc': 'bgc'
-    }[e.target.name];
+    // let key = {
+    //   'inputTagText': 'text',
+    //   'inputTagColor': 'color',
+    //   'inputTagBgc': 'bgc'
+    // }[e.target.name];
+    let key;
+    switch (e.target.name) {
+      case 'inputTagText': key = 'text'; break;
+      case 'inputTagColor': key = 'color'; break;
+      case 'inputTagBgc': key = 'bgc'; break;
+      default: ;
+    }
     setInputTag({
       ...inputTag,
       [key]: e.target.value
@@ -68,18 +54,47 @@ export default function Main() {
       }
     }
 
+    if (inputTag.text === '') return;
+
     setTagDB([
       ...tagDB,
-      new Tag(inputTag.text, inputTag.color, inputTag.bgc)
+      {
+        id: nextTagId.current,
+        text: inputTag.text,
+        color: inputTag.color,
+        bgc: inputTag.bgc
+      }
     ]);
+    nextTagId.current++;
 
     clearInputTag();
   }
+
+  const createTagKit = {
+    text: inputTag.text,
+    color: inputTag.color,
+    bgc: inputTag.bgc,
+    onChange: onChangeInputTag,
+    onCancel: clearInputTag,
+    onCreate: createTag
+  };
   /* -------------------------------------------- */
 
   /* CreateTodo --------------------------------- */
   // 1. chooseTags
   const [selected, setSelected] = useState([]);
+  const toggleSelected = (i) => {
+    if (selected.includes(i))
+      setSelected(selected.filter(
+        tag => tag.id !== i
+      ));
+    else setSelected([...selected, i]);
+  }
+  // 태그 선택항목을 보여줄지 말지 선택
+  const [showTags, setShowTags] = useState(false);
+  const toggleShowTags = () => {
+    setShowTags(a => !a);
+  }
 
   // 2. inputText
   const [inputText, setInputText] = useState('');
@@ -95,22 +110,35 @@ export default function Main() {
       }
     }
 
-    // todo 등록 : tag는 나중에 작업
+    if (inputText === '') return;
+
+    selected.sort();
+    // todo 등록
     setTodoDB([
-      ...todoDB,
-      new Todo(inputText, selected)
+      ...todoDB, {
+        id: nextTodoId.current,
+        text: inputText,
+        tags: [...selected],
+      }
     ]);
 
     // 입력 항목 초기화
     clearInputText();
-    clearInputTag();
     setSelected([]);
+    setShowTags(false);
+    nextTodoId.current++;
   }
   /* -------------------------------------------- */
 
   return <div className="main">
     <CreateTodo
-      texts={{
+      tags={{
+        DB: tagDB,
+        tagList: selected,
+        toggleTag: toggleSelected,
+      }}
+      createTagKit={createTagKit}
+      inputText={{
         value: inputText,
         onChange: (e) => {
           setInputText(e.target.value);
@@ -118,16 +146,10 @@ export default function Main() {
         onCancel: clearInputText
       }}
       onCreate={registerTodo}
-    />
-    <CreateTag
-      text={inputTag.text}
-      color={inputTag.color}
-      bgc={inputTag.bgc}
-      onChange={onChangeInputTag}
-      onCancel={clearInputTag}
-      onCreate={createTag}
+      showTags={showTags}
+      toggleShowTags={toggleShowTags}
     />
     {/* filter 부분 */}
-    {/* todos.map() */}
+    <TodoList todoDB={todoDB} tagDB={tagDB} />
   </div>
 };

@@ -1,4 +1,117 @@
 .App {
   text-align: center;
+  margin: 10px auto 0;
+  width: 1200px;
+}
+
+ol, ul, li{
+  list-style: none;
+}
+
+button {
+  border: none;
+  background-color: rgba(0, 0, 0, 0.04);
+  min-width: 30px;
+  height: 30px;
+}
+
+input {
+  height: 30px;
+  box-sizing: border-box;
+
+  outline: none;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.createTodo {
+  width: 400px;
+  margin: 0 auto;
+
+  display: flex;
+  justify-content: space-between;
+}
+.createTodo>.input{
+  display: flex;
+  align-items: center;
+}
+.createTodo>.input>input{
+  width: 230px;
+}
+
+.chooseTags {
+  position: absolute;
+  left: 500px;
+
+  width: 250px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 20px 0;
+
+  box-sizing: border-box;
+}
+.chooseTags>ul{
+  padding: 0;
+}
+
+.createTag{
+  display: flex;
+  justify-content: center;
+}
+.createTag input{
+  margin-bottom: 10px;
+}
+
+.createTag .inputTagText input {
+  width: 200px;
+}
+.createTag .colorInput{
+  width: 100px;
+}
+
+.tagLi{
+  width: 240px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.tagDiv{
+  width: 130px;
+  height: 30px;
+  line-height: 30px;
+}
+.tagLi>input{
+  width: 24px;
+  height: 24px;
+}
+
+/* todoList */
+.todoList{
+  width: 400px;
+  margin: 0 auto;
+}
+.todo{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   margin-top: 10px;
+}
+.todoTags{
+  display: flex;
+  justify-content: left;
+  width: 400px;
+}
+.todoTag{
+  min-width: 70px;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+.todoText{
+  padding-left: 10px;
+  width: 400px;
+  text-align: left;
+  height: 40px;
+  line-height: 40px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
