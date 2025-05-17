@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import CreateTodo from "./CreateTodo";
 import TodoList from "./TodoList";
 import ChooseTags from "./ChooseTags";
+import Filter from "./Filter";
 
 export default function Main() {
   /* DB : todos, tags */
@@ -195,7 +196,7 @@ export default function Main() {
     const target = todoDB[
       todoDB.findIndex(todo => todo.id === id)
     ];
-    if(!target) {
+    if (!target) {
       alert('알 수 없는 오류');
       return;
     }
@@ -261,8 +262,42 @@ export default function Main() {
   /* -------------------------------------------- */
 
   /* filter ------------------------------------- */
-  /* -------------------------------------------- */
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const toggleFilterWindow = () => {
+    setIsFilterOpen(e => !e);
+  };
 
+  const [filterImportant, setFilterImportant] = useState(false);
+  const [filterTags, setFilterTags] = useState([]);
+
+  const toggleFilterImportant = () => {
+    setFilterImportant(e => !e);
+  }
+  const toggleFilterTag = (id) => {
+    if (filterTags.includes(id)) setFilterTags(
+      filterTags.filter(e => e !== id)
+    );
+    else setFilterTags([
+      ...filterTags, id
+    ]);
+  }
+
+  const filteredTodo = (() => {
+    if (!filterImportant && (filterTags.length === 0)) return todoDB;
+    return todoDB.filter(todo => {
+      // 1. important
+      if (filterImportant && !todo.important) return false;
+
+      // 2. tag
+      if (filterTags.length === 0) return true;
+      for (const id of filterTags) {
+        if (todo.tags.includes(id)) return true;
+      }
+      return false;
+    })
+  })();
+
+  /* -------------------------------------------- */
   return <div className="main">
     {
       showTags.isShow &&
@@ -274,33 +309,46 @@ export default function Main() {
         deleteTag={deleteTag}
         createTagKit={createTagKit} />
     }
-    <CreateTodo
-      tags={{
-        DB: tagDB,
-        tagList: selected,
-        toggleTag: toggleSelected,
-        deleteTag: deleteTag
-      }}
-      createTagKit={createTagKit}
-      inputText={{
-        value: inputText,
-        onChange: (e) => {
-          setInputText(e.target.value);
-        },
-        onCancel: clearInputText
-      }}
-      onCreate={registerTodo}
-      showTags={showTags}
-      toggleShowTags={toggleShowTags}
+    <div className="middle">
+      <CreateTodo
+        tags={{
+          DB: tagDB,
+          tagList: selected,
+          toggleTag: toggleSelected,
+          deleteTag: deleteTag
+        }}
+        createTagKit={createTagKit}
+        inputText={{
+          value: inputText,
+          onChange: (e) => {
+            setInputText(e.target.value);
+          },
+          onCancel: clearInputText
+        }}
+        onCreate={registerTodo}
+        showTags={showTags}
+        toggleShowTags={toggleShowTags}
+      />
+      <div className="openFilter"
+        onClick={toggleFilterWindow}>
+        <span>{filterImportant || (filterTags.length > 0) ? "필터 적용중" : "태그로 할 일들 골라보기"}</span>
+      </div>
+      <TodoList
+        todoDB={filteredTodo}
+        tagDB={tagDB}
+        deleteTodo={deleteTodo}
+        toggleImportant={toggleImportant}
+        updateTodoKit={updateTodoKit}
+        updateTodo={updateTodo}
+      />
+    </div>
+    <Filter
+      tagDB={tagDB}
+      filterImportant={filterImportant}
+      filterTags={filterTags}
+      toggleImportant={toggleFilterImportant}
+      toggleTags={toggleFilterTag}
+      isFilterOpen={isFilterOpen}
     />
-    {/* filter 부분 */}
-    <TodoList 
-    todoDB={todoDB} 
-    tagDB={tagDB} 
-    deleteTodo={deleteTodo} 
-    toggleImportant={toggleImportant}
-    updateTodoKit={updateTodoKit}
-    updateTodo={updateTodo}
-     />
   </div>
 };
