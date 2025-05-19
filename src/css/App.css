@@ -53,6 +53,12 @@ input {
 
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+.createTodo button {
+  min-width: 34px;
+  height: 34px;
+  box-sizing: border-box;
 }
 
 .createTodo>.input {
@@ -62,7 +68,7 @@ input {
 
 .createTodo>.input>input {
   width: 230px;
-  padding: 1px 7px 3px;
+  padding: 16px 6px;
 }
 
 .chooseTags {
@@ -100,6 +106,9 @@ input {
 
 .createTag input {
   margin-bottom: 10px;
+}
+.createTag .inputTagText>input{
+  padding: 16px 6px;
 }
 
 .createTag .inputTagText input {
@@ -203,6 +212,10 @@ input {
   cursor: pointer;
 }
 
+.updateTodo>svg{
+  margin-right: 3px;
+}
+
 .todoText {
   padding-left: 10px;
   width: 400px;
@@ -252,7 +265,7 @@ input {
 
 /* FilterOpenButton */
 .openFilter {
-  margin: 10px auto;
+  margin: 20px auto 10px;
 
   width: 400px;
   height: 40px;
